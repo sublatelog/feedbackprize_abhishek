@@ -118,6 +118,8 @@ class FeedbackModel(tez.Model):
             }
         )
         self.transformer = AutoModel.from_pretrained(model_name, config=config)
+        self.transformer.gradient_checkpointing_enable()
+        
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.2)
