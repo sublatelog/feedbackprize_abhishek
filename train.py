@@ -14,6 +14,9 @@ from transformers import AdamW, AutoConfig, AutoModel, AutoTokenizer, get_cosine
 
 from utils import EarlyStopping, prepare_training_data, target_id_map
 
+import wandb
+import datetime
+
 warnings.filterwarnings("ignore")
 
 
@@ -94,7 +97,7 @@ class FeedbackDataset:
 
 
 class FeedbackModel(tez.Model):
-    def __init__(self, model_name, num_train_steps, learning_rate, num_labels, steps_per_epoch):
+    def __init__(self, model_name, num_train_steps, learning_rate, num_labels, steps_per_epoch, wandb):
         super().__init__()
         self.learning_rate = learning_rate
         self.model_name = model_name
@@ -102,6 +105,7 @@ class FeedbackModel(tez.Model):
         self.num_labels = num_labels
         self.steps_per_epoch = steps_per_epoch
         self.step_scheduler_after = "batch"
+        self.wandb = wandb
 
         hidden_dropout_prob: float = 0.1
         layer_norm_eps: float = 1e-7
@@ -116,7 +120,8 @@ class FeedbackModel(tez.Model):
                 "add_pooling_layer": False,
                 "num_labels": self.num_labels,
             }
-        )
+        )        
+        
         self.transformer = AutoModel.from_pretrained(model_name, config=config)
         self.transformer.gradient_checkpointing_enable()
         
@@ -210,6 +215,9 @@ class FeedbackModel(tez.Model):
             f1_5 = self.monitor_metrics(logits5, targets, attention_mask=mask)["f1"]
             f1 = (f1_1 + f1_2 + f1_3 + f1_4 + f1_5) / 5
             metric = {"f1": f1}
+            
+            self.wandb.log({'f1':f1, 'loss': loss,})
+            
             return logits, loss, metric
 
         return logits, loss, {}
@@ -220,6 +228,32 @@ if __name__ == "__main__":
     args = parse_args()
     seed_everything(42)
     os.makedirs(args.output, exist_ok=True)
+    
+    
+    # wandb ----------------------------------------------------------------------------------------------------
+    dt_now = datetime.datetime.now()
+   
+    # wandb setting
+    if ON_KAGGLE:
+        if  not Config.inference_only:
+            from kaggle_secrets import UserSecretsClient
+            user_secrets = UserSecretsClient()
+            api_key = user_secrets.get_secret("WANDB_API")
+            wandb.login(key=api_key)
+    else:
+        wandb.login()
+
+        wandb.init(
+            project="Feedback",
+            entity="sublate",
+            name=f'V{VER}_{dt_now}',
+            notes="abhishek069",
+            tags=["baseline",],
+            config=args,
+        )
+    
+    
+    
     df = pd.read_csv(os.path.join(args.input, "train_folds.csv"))
 
     train_df = df[df["kfold"] != args.fold].reset_index(drop=True)
@@ -233,6 +267,10 @@ if __name__ == "__main__":
 
     num_train_steps = int(len(train_dataset) / args.batch_size / args.accumulation_steps * args.epochs)
     print(num_train_steps)
+    
+    
+    
+    
 
     model = FeedbackModel(
         model_name=args.model,
@@ -240,6 +278,7 @@ if __name__ == "__main__":
         learning_rate=args.lr,
         num_labels=len(target_id_map) - 1,
         steps_per_epoch=len(train_dataset) / args.batch_size,
+        wandb,
     )
 
     es = EarlyStopping(
