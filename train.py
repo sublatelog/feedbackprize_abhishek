@@ -224,7 +224,11 @@ class FeedbackModel(tez.Model):
 
 
 if __name__ == "__main__":
-    NUM_JOBS = 12
+    VER = 3
+    ON_KAGGLE = False
+    
+    NUM_JOBS = 2
+#     NUM_JOBS = 12
     args = parse_args()
     seed_everything(42)
     os.makedirs(args.output, exist_ok=True)
