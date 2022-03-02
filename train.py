@@ -276,9 +276,9 @@ if __name__ == "__main__":
         model_name=args.model,
         num_train_steps=num_train_steps,
         learning_rate=args.lr,
-        wandb,
         num_labels=len(target_id_map) - 1,
         steps_per_epoch=len(train_dataset) / args.batch_size,
+        wandb = wandb,
     )
 
     es = EarlyStopping(
