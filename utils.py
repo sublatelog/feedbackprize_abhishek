@@ -254,7 +254,6 @@ class EarlyStopping(Callback):
         mode="max",
         delta=0.001,
         save_weights_only=True,
-        wandb,
     ):
         self.patience = patience
         self.counter = 0
