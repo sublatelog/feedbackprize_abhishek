@@ -391,7 +391,8 @@ class EarlyStopping(Callback):
 
         scr = score_feedback_comp(submission, self.valid_df, return_class_scores=True)
         print(scr)
-        self.wandb.log(scr)
+        self.wandb.log({f1_epoch:scr[0]})
+        self.wandb.log(scr[1])
         
         model.train()
 
