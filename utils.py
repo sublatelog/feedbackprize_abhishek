@@ -250,6 +250,7 @@ class EarlyStopping(Callback):
         valid_samples,
         batch_size,
         tokenizer,
+        wandb,
         patience=5,
         mode="max",
         delta=0.001,
