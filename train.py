@@ -295,6 +295,7 @@ if __name__ == "__main__":
         delta=0.001,
         save_weights_only=True,
         tokenizer=tokenizer,
+        wandb = wandb,
     )
 
     model.fit(
