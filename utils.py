@@ -254,6 +254,7 @@ class EarlyStopping(Callback):
         mode="max",
         delta=0.001,
         save_weights_only=True,
+        wandb,
     ):
         self.patience = patience
         self.counter = 0
@@ -267,6 +268,7 @@ class EarlyStopping(Callback):
         self.batch_size = batch_size
         self.valid_df = valid_df
         self.tokenizer = tokenizer
+        self.wandb = wandb
 
         if self.mode == "min":
             self.val_score = np.Inf
