@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument("--valid_batch_size", type=int, default=8, required=False)
     parser.add_argument("--epochs", type=int, default=20, required=False)
     parser.add_argument("--accumulation_steps", type=int, default=1, required=False)
-    parser.add_argument("--resume", action='store_false')
+    parser.add_argument("--resume", action='store_true')
     return parser.parse_args()
 
 
