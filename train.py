@@ -43,6 +43,8 @@ def parse_args():
     parser.add_argument("--epochs", type=int, default=20, required=False)
     parser.add_argument("--accumulation_steps", type=int, default=1, required=False)
     parser.add_argument("--resume", action='store_true')
+    parser.add_argument("--save_weights_only", action='store_true')
+    
     return parser.parse_args()
 
 
@@ -298,7 +300,7 @@ if __name__ == "__main__":
         patience=5,
         mode="max",
         delta=0.001,
-        save_weights_only=True,
+        save_weights_only=args.save_weights_only,
         tokenizer=tokenizer,
         wandb = wandb,
     )
