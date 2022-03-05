@@ -47,6 +47,7 @@ def parse_args():
     parser.add_argument("--accumulation_steps", type=int, default=1, required=False)
     parser.add_argument("--resume", action='store_true')
     parser.add_argument("--save_weights_only", action='store_true')
+    parser.add_argument("--counter", type=int, default=0, required=False)
     
     return parser.parse_args()
 
@@ -290,6 +291,7 @@ if __name__ == "__main__":
         num_labels=len(target_id_map) - 1,
         steps_per_epoch=len(train_dataset) / args.batch_size,
         wandb = wandb,
+        counter = args.counter,
     )
     
     if args.resume:
