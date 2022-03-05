@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 # import tez
-form tez import *
+from tez import *
 import torch
 import torch.nn as nn
 from sklearn import metrics
