@@ -104,7 +104,7 @@ class FeedbackDataset:
 
 
 class FeedbackModel(tez.Model):
-    def __init__(self, model_name, num_train_steps, learning_rate, num_labels, steps_per_epoch, wandb, counter):
+    def __init__(self, model_name, num_train_steps, learning_rate, num_labels, steps_per_epoch, wandb):
         super().__init__()
         self.learning_rate = learning_rate
         self.model_name = model_name
@@ -113,7 +113,6 @@ class FeedbackModel(tez.Model):
         self.steps_per_epoch = steps_per_epoch
         self.step_scheduler_after = "batch"
         self.wandb = wandb
-        self.counter = counter
 
         hidden_dropout_prob: float = 0.1
         layer_norm_eps: float = 1e-7
@@ -291,15 +290,11 @@ if __name__ == "__main__":
         num_labels=len(target_id_map) - 1,
         steps_per_epoch=len(train_dataset) / args.batch_size,
         wandb = wandb,
-        counter = args.counter,
     )
     
     if args.resume:
         model_path = os.path.join(args.output, f"model_{args.fold}.bin")
         model.load(model_path)
-#         counter = model.counter
-    else:
-        counter = args.counter
 
     es = EarlyStopping(
         model_path=os.path.join(args.output, f"model_{args.fold}.bin"),
@@ -312,7 +307,6 @@ if __name__ == "__main__":
         save_weights_only=args.save_weights_only,
         tokenizer=tokenizer,
         wandb = wandb,
-        counter = counter
     )
 
     model.fit(
