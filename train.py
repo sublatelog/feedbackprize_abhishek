@@ -1,3 +1,6 @@
+import sys
+sys.path.append("/content/tez-lib")
+
 import argparse
 import os
 import random
