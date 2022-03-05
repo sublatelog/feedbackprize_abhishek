@@ -255,9 +255,10 @@ class EarlyStopping(Callback):
         mode="max",
         delta=0.001,
         save_weights_only=True,
+        counter = 0,
     ):
         self.patience = patience
-        self.counter = 0
+        self.counter = counter
         self.mode = mode
         self.best_score = None
         self.early_stop = False
