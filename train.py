@@ -297,7 +297,7 @@ if __name__ == "__main__":
     if args.resume:
         model_path = os.path.join(args.output, f"model_{args.fold}.bin")
         model.load(model_path)
-        counter = model.counter
+#         counter = model.counter
 
     es = EarlyStopping(
         model_path=os.path.join(args.output, f"model_{args.fold}.bin"),
